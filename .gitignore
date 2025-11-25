@@ -1,0 +1,28 @@
+# Build artifacts
+*.o
+*.so
+*.a
+target/
+kvs_demo
+rust_demo
+
+# Demo data directories
+*_demo_data/
+*_data/
+test_data/
+
+# Distribution artifacts
+dist/
+rpmbuild/
+*.tar.gz
+*.rpm
+
+# Cargo lock file (generated)
+Cargo.lock
+
+# Editor and IDE files
+*~
+*.swp
+*.swo
+.vscode/
+.idea/
