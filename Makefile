@@ -91,34 +91,36 @@ dist: clean-dist
 # Build source RPM
 srpm: dist
 	@echo "Building source RPM..."
-	@TMPDIR=$$(mktemp -d) && \
-	mkdir -p "$$TMPDIR"/{SOURCES,SPECS,BUILD,SRPMS,RPMS} && \
-	cp dist/$(PROJECT_NAME)-$(VERSION).tar.gz "$$TMPDIR"/SOURCES/ && \
-	cp $(PROJECT_NAME).spec "$$TMPDIR"/SPECS/ && \
-	rpmbuild -bs --define "_topdir $$TMPDIR" "$$TMPDIR"/SPECS/$(PROJECT_NAME).spec && \
-	cp "$$TMPDIR"/SRPMS/$(PROJECT_NAME)-$(VERSION)-$(RELEASE)*.src.rpm . && \
-	rm -rf "$$TMPDIR"
-	@echo "Source RPM built successfully"
-	@ls -la $(PROJECT_NAME)-$(VERSION)-$(RELEASE)*.src.rpm
+	@set -e; \
+	TMPDIR=$$(mktemp -d); \
+	echo "Using temp directory: $$TMPDIR"; \
+	cp dist/$(PROJECT_NAME)-$(VERSION).tar.gz "$$TMPDIR"/; \
+	cp $(PROJECT_NAME).spec "$$TMPDIR"/; \
+	(cd "$$TMPDIR" && rpmbuild -bs --define "_topdir $$TMPDIR" $(PROJECT_NAME).spec); \
+	cp "$$TMPDIR"/*.src.rpm .; \
+	rm -rf "$$TMPDIR"; \
+	echo "Source RPM built successfully"; \
+	ls -la *.src.rpm
 
 # Build binary RPMs from source RPM
 rpm: srpm
 	@echo "Building binary RPMs..."
-	@TMPDIR=$$(mktemp -d) && \
-	mkdir -p "$$TMPDIR"/{SOURCES,SPECS,BUILD,SRPMS,RPMS} && \
-	cp $(PROJECT_NAME)-$(VERSION)-$(RELEASE)*.src.rpm "$$TMPDIR"/SRPMS/ && \
-	rpmbuild --rebuild --define "_topdir $$TMPDIR" "$$TMPDIR"/SRPMS/$(PROJECT_NAME)-$(VERSION)-$(RELEASE)*.src.rpm && \
-	cp "$$TMPDIR"/RPMS/*/*.rpm . && \
-	rm -rf "$$TMPDIR"
-	@echo "Binary RPMs built successfully"
-	@ls -la $(PROJECT_NAME)*-$(VERSION)-$(RELEASE)*.rpm
+	@set -e; \
+	TMPDIR=$$(mktemp -d); \
+	echo "Using temp directory: $$TMPDIR"; \
+	cp *.src.rpm "$$TMPDIR"/; \
+	(cd "$$TMPDIR" && rpmbuild --rebuild --define "_topdir $$TMPDIR" *.src.rpm); \
+	find "$$TMPDIR" -name "*.rpm" -not -name "*.src.rpm" -exec cp {} . \;; \
+	rm -rf "$$TMPDIR"; \
+	echo "Binary RPMs built successfully"; \
+	ls -la *.rpm
 
 # Clean distribution artifacts
 clean-dist:
 	@echo "Cleaning distribution artifacts..."
 	@rm -rf dist/
 	@rm -f $(PROJECT_NAME)-$(VERSION).tar.gz
-	@rm -f $(PROJECT_NAME)*-$(VERSION)-$(RELEASE)*.rpm
+	@rm -f *.rpm
 	@echo "Distribution artifacts cleaned"
 
 # Help
