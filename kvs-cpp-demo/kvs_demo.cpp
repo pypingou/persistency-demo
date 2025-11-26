@@ -24,8 +24,8 @@
  * - Thread-safe operations
  */
 
-#include "persistency/kvsbuilder.hpp"
-#include "persistency/internal/kvs_helper.hpp"
+#include "kvs/kvsbuilder.hpp"
+#include "kvs/internal/kvs_helper.hpp"
 #include <iostream>
 #include <iomanip>
 #include <vector>
