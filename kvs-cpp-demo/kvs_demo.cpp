@@ -25,7 +25,7 @@
  */
 
 #include "kvs/kvsbuilder.hpp"
-#include "kvs/internal/kvs_helper.hpp"
+#include "internal/kvs_helper.hpp"
 #include <iostream>
 #include <iomanip>
 #include <vector>

@@ -6,7 +6,7 @@ CXXFLAGS = -std=c++17 -Wall -Wextra -Wpedantic -O2 -g
 DEMO_TARGET = kvs_demo
 
 # System include and library paths for installed persistency
-INCLUDES = -I/usr/include
+INCLUDES = -I/usr/include -I/usr/include/kvs
 LIBS = -lpersistency-cpp -lpersistency-internal -lpersistency-value -lpthread
 
 # Source files
