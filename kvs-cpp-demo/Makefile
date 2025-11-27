@@ -6,8 +6,8 @@ CXXFLAGS = -std=c++17 -Wall -Wextra -Wpedantic -O2 -g
 DEMO_TARGET = kvs_demo
 
 # System include and library paths for installed persistency
-INCLUDES = -I/usr/include -I/usr/include/kvs
-LIBS = -lpersistency-cpp -lpersistency-internal -lpersistency-value -lpthread
+INCLUDES = -I/usr/include -I/usr/include/kvs -I/usr/include/score/static_reflection_with_serialization/visitor/include
+LIBS = -lkvs_cpp -lkvs_internal -lkvsvalue -lscore_memory -lscore_utils -lscore_containers -lscore_bitmanipulation -lscore_filesystem -lscore_concurrency -lscore_json -lscore_os -lscore_log -lscore_analysis -lscore_safecpp -lscore_quality -lscore_result -lscore_futurecpp -lacl -lcap -lgcov -lpthread
 
 # Source files
 DEMO_SOURCES = kvs_demo.cpp

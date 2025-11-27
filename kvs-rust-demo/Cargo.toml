@@ -12,11 +12,8 @@ name = "rust_demo"
 path = "rust_demo.rs"
 
 [dependencies]
-# Main KVS library - using system installed version
-rust_kvs = "0.1.0"
-
-# Dependencies required by the demo
-tinyjson = "2.5.1"
+# Main KVS library - uses local copy in distribution tarball
+rust_kvs = { path = "../rust_kvs" }
 
 [lints.rust]
 unexpected_cfgs = { level = "warn", check-cfg = ['cfg(coverage_nightly)'] }

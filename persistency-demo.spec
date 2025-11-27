@@ -11,8 +11,11 @@ BuildRequires:  gcc-c++
 BuildRequires:  make
 BuildRequires:  rust
 BuildRequires:  cargo
+BuildRequires:  score-baselibs-devel
 BuildRequires:  persistency-cpp-devel
 BuildRequires:  persistency-rust-devel
+BuildRequires:  libacl-devel
+BuildRequires:  libcap-devel
 
 Requires:       persistency-cpp
 Requires:       persistency-rust
@@ -53,6 +56,9 @@ cd ..
 
 # Build Rust demo
 cd kvs-rust-demo
+# Ensure proper permissions on vendored sources
+find vendor -type f -exec chmod 644 {} + 2>/dev/null || true
+find vendor -type d -exec chmod 755 {} + 2>/dev/null || true
 cargo build --release
 cd ..
 

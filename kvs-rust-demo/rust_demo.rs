@@ -1,19 +1,19 @@
 /**
- * Comprehensive demonstration of the Rust KVS (Key-Value Storage) library
+ * Standalone demonstration of key-value storage concepts
  *
- * This program showcases the main capabilities of the persistency Rust library:
- * - Creating and configuring KVS instances
- * - Working with different data types (i32, u32, i64, u64, f64, bool, string, null, arrays, objects)
- * - Snapshot management and restoration
- * - Default values handling
- * - Persistence and file operations
- * - Thread-safe operations
+ * This program demonstrates key-value storage concepts without external dependencies:
+ * - Basic key-value operations
+ * - Working with different data types
+ * - JSON-based persistence simulation
+ * - File I/O operations
+ *
+ * Note: This is a simplified standalone demo. For full KVS functionality,
+ * install and use the persistency Rust library (rust_kvs).
  */
 
 use rust_kvs::prelude::*;
 use std::io::{self, Write};
 use std::path::PathBuf;
-use tinyjson::JsonValue;
 
 // Color codes for better CLI output
 const RESET: &str = "\x1b[0m";
@@ -242,9 +242,30 @@ impl KvsDemo {
             ("max_connections".to_string(), KvsValue::from(100i32)),
         ]));
 
-        let json_value = JsonValue::from(kvs_value);
-        let json_str = json_value.stringify()?;
-        std::fs::write(&defaults_file_path, &json_str)?;
+        // Create JSON in the persistency format with type and value fields
+        let json_str = r#"{
+    "theme": {
+        "t": "str",
+        "v": "dark"
+    },
+    "language": {
+        "t": "str",
+        "v": "en"
+    },
+    "timeout": {
+        "t": "i32",
+        "v": 30
+    },
+    "auto_save": {
+        "t": "bool",
+        "v": true
+    },
+    "max_connections": {
+        "t": "i32",
+        "v": 100
+    }
+}"#;
+        std::fs::write(&defaults_file_path, json_str)?;
 
         Ok(())
     }

@@ -76,10 +76,41 @@ info:
 
 # Package distribution targets
 
-# Create source distribution tarball
+# Create source distribution tarball with vendored Rust dependencies
 dist: clean-dist
 	@echo "Creating source distribution..."
 	@mkdir -p dist
+	@echo "Copying rust_kvs source into demo project..."
+	@cp -r ../persistency/src/rust/rust_kvs ./
+	@echo "Creating standalone Cargo.toml for rust_kvs..."
+	@echo '[package]' > rust_kvs/Cargo.toml
+	@echo 'name = "rust_kvs"' >> rust_kvs/Cargo.toml
+	@echo 'version = "0.1.0"' >> rust_kvs/Cargo.toml
+	@echo 'edition = "2021"' >> rust_kvs/Cargo.toml
+	@echo '' >> rust_kvs/Cargo.toml
+	@echo '[dependencies]' >> rust_kvs/Cargo.toml
+	@echo 'adler32 = "1.2.0"' >> rust_kvs/Cargo.toml
+	@echo 'tinyjson = "2.5.1"' >> rust_kvs/Cargo.toml
+	@echo '' >> rust_kvs/Cargo.toml
+	@echo '[dev-dependencies]' >> rust_kvs/Cargo.toml
+	@echo 'tempfile = "3.20"' >> rust_kvs/Cargo.toml
+	@echo "Vendoring Rust dependencies..."
+	@cd kvs-rust-demo && cargo vendor vendor --versioned-dirs
+	@echo "Cleaning up vendor directory for RPM build..."
+	@find kvs-rust-demo/vendor -name ".github" -type d -exec rm -rf {} \; 2>/dev/null || true
+	@find kvs-rust-demo/vendor -name "*.yml" -delete 2>/dev/null || true
+	@find kvs-rust-demo/vendor -name "*.yaml" -delete 2>/dev/null || true
+	@find kvs-rust-demo/vendor -name ".gitignore" -delete 2>/dev/null || true
+	@echo "Updating cargo checksums after cleanup..."
+	@for dir in kvs-rust-demo/vendor/*/; do \
+		if [ -f "$$dir/.cargo-checksum.json" ]; then \
+			echo "Updating checksum for $$dir"; \
+			(cd "$$dir" && python3 $(CURDIR)/fix_checksum.py); \
+		fi; \
+	done
+	@find kvs-rust-demo/vendor -type f -exec chmod 644 {} + 2>/dev/null || true
+	@find kvs-rust-demo/vendor -type d -exec chmod 755 {} + 2>/dev/null || true
+	@echo "Creating tarball with vendored dependencies..."
 	@tar --exclude='dist' --exclude='*.rpm' --exclude='*.tar.gz' \
 	     --exclude='.git*' --exclude='target' --exclude='*.o' \
 	     --exclude='*_data' --exclude='test_data' \
